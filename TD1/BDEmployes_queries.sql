@@ -19,7 +19,7 @@ FROM EMP NATURAL JOIN PARTICIPATION
 WHERE (ENAME IS "ADAMS" OR ENAME IS "MARTIN");
 
 -- Q5-Donner le nom des départements avec des clerk qui travaillent sur le projet 2.
-SELECT DNAME
+SELECT DISTINCT DNAME
 FROM EMP NATURAL JOIN DEPT NATURAL JOIN PARTICIPATION
 WHERE (JOB IS "CLERK" AND PNO IS 2);
 
@@ -51,20 +51,40 @@ EXCEPT
 SELECT DISTINCT DEPTNO FROM EMP;
 
 -- Q11-Donner le nom des projets auxquels participent l'employé numéro 7900 et l'employé numéro 7521.
+ SELECT DISTINCT PNAME
+ FROM PROJECT NATURAL JOIN PARTICIPATION
+ WHERE (EMPNO IS 7521 OR 7900);
 
 -- Q12-Donner le numéro des projets de la catégorie A ou mobilisant l'employé numéro 7876.
+SELECT DISTINCT PNO
+FROM PARTICIPATION NATURAL JOIN PROJECT
+WHERE (CAT IS 'A' OR EMPNO IS 7876);
 
 -- Q13-Donner le nombre de jobs différents.
+SELECT COUNT(DISTINCT JOB)
+FROM EMP;
 
 -- Q14-Donner le salaire moyen et la commission moyenne pour chaque job.
+SELECT AVG(SAL), AVG(COMM)
+FROM EMP GROUP BY JOB;
 
 -- Q15-Donner le numéro des projets avec au moins 4 participants.
+SELECT PNO
+FROM PARTICIPATION GROUP BY PNO
+HAVING COUNT(PNO) >= 4;
 
 -- Q16-Donner le nom des employés dont le nom commence par A et participant à au moins 2 projets.
+SELECT ENAME
+FROM PARTICIPATION NATURAL JOIN EMP GROUP BY EMPNO
+HAVING (COUNT(EMPNO) >= 2 AND SUBSTR(ENAME, 1, 1) IS A);
 
 -- Q17-Donner le nombre de projets par employés (afficher leur numéro et leur nom).
+SELECT COUNT(PNO), EMPNO, ENAME
+FROM EMP NATURAL JOIN PARTICIPATION GROUP BY EMPNO;
 
 -- Q18-Donner le nombre d'employés moyen par job.
+SELECT AVG(COMP)
+FROM (SELECT COUNT(EMPNO) AS COMP FROM EMP GROUP BY JOB);
 
 -- Q19-Donner le job ayant le salaire moyen le plus faible.
 
