@@ -87,12 +87,28 @@ SELECT AVG(COMP)
 FROM (SELECT COUNT(EMPNO) AS COMP FROM EMP GROUP BY JOB);
 
 -- Q19-Donner le job ayant le salaire moyen le plus faible.
+SELECT JOB, MIN(MOY)
+FROM (SELECT JOB, AVG(SAL) AS MOY FROM EMP GROUP BY JOB);
 
 -- Q20-Donner le numéro des employés qui participent à tous les projets.
+SELECT ENAME, EMPNO
+FROM EMP NATURAL JOIN PARTICIPATION GROUP BY EMPNO
+HAVING COUNT(DISTINCT PNO) > (SELECT COUNT(DISTINCT PNO) FROM PROJECT);
 
 -- Q21-Donner le numéro des employés qui participent à tous les projets de la catégorie C.
+SELECT DISTINCT EMPNO
+FROM PARTICIPATION
+WHERE PNO IN (SELECT PNO FROM PROJECT WHERE CAT IS "C");
 
 -- Q22-Donner le nom des projets de la catégorie B qui mobilisent tous les employés.
+SELECT PNAME
+FROM PROJECT
+WHERE CAT IS "B" AND PNO = (SELECT PNO
+      	     	     	    FROM PARTICIPATION GROUP BY PNO
+			    HAVING COUNT(DISTINCT EMPNO) = (SELECT COUNT(EMPNO )
+			    	   		  	    FROM EMP));
+
+
 
 -- Q23-Donner le nom des employés qui dépendent (directement ou non) de JONES.
 
