@@ -93,12 +93,16 @@ FROM (SELECT JOB, AVG(SAL) AS MOY FROM EMP GROUP BY JOB);
 -- Q20-Donner le numéro des employés qui participent à tous les projets.
 SELECT ENAME, EMPNO
 FROM EMP NATURAL JOIN PARTICIPATION GROUP BY EMPNO
-HAVING COUNT(DISTINCT PNO) > (SELECT COUNT(DISTINCT PNO) FROM PROJECT);
+HAVING COUNT(PNO) > (SELECT COUNT(PNO) FROM PROJECT);
 
 -- Q21-Donner le numéro des employés qui participent à tous les projets de la catégorie C.
 SELECT DISTINCT EMPNO
 FROM PARTICIPATION
-WHERE PNO IN (SELECT PNO FROM PROJECT WHERE CAT IS "C");
+WHERE PNO IN (SELECT PNO FROM PROJECT WHERE CAT IS "C")
+GROUP BY EMPNO
+HAVING COUNT(PNO) = (SELECT COUNT(PNO)
+       		     FROM PROJECT
+		     WHERE CAT='C');
 
 -- Q22-Donner le nom des projets de la catégorie B qui mobilisent tous les employés.
 SELECT PNAME
@@ -108,9 +112,12 @@ WHERE CAT IS "B" AND PNO = (SELECT PNO
 			    HAVING COUNT(DISTINCT EMPNO) = (SELECT COUNT(EMPNO )
 			    	   		  	    FROM EMP));
 
-
-
 -- Q23-Donner le nom des employés qui dépendent (directement ou non) de JONES.
+SELECT ENAME
+FROM EMP
+WHERE ENAME != 'JONES'
+CONNECT BY PRIOR EMPNO = MGR
+START WITH ENAME IS 'JONES';
 
 -- Q24-Donner le nom des employés dirigés directement par KING.
 -- Requête Q6 mais en utilisant CONNECT BY et LEVEL.
