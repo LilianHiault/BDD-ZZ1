@@ -117,16 +117,38 @@ SELECT ENAME
 FROM EMP
 WHERE ENAME != 'JONES'
 CONNECT BY PRIOR EMPNO = MGR
-START WITH ENAME IS 'JONES';
+START WITH ENAME = 'JONES';
 
 -- Q24-Donner le nom des employés dirigés directement par KING.
+SELECT ENAME
+FROM EMP
+WHERE ENAME != 'JONES' AND LEVEL = 2
+CONNECT BY PRIOR EMPNO = MGR
+START WITH ENAME = 'KING';
+
 -- Requête Q6 mais en utilisant CONNECT BY et LEVEL.
 
+
 -- Q25-Donner le nom des supérieurs de SMITH.
+SELECT ENAME
+FROM EMP
+WHERE ENAME != 'SMITH'
+CONNECT BY PRIOR MGR = EMPNO
+START WITH ENAME = 'SMITH';
 
 -- Q26-Donner le numéro, le nom et la date d'embauche (formatée en DD/MM)
 -- des employés embauchés entre le 01/04/1981 et le 30/09/1981
 -- par ordre décroissant de la date puis nom croissant.
+SELECT EMPNO, ENAME, HIREDATE
+FROM EMP
+WHERE HIREDATE >= TO_DATE('01/04/1981', 'DD/MM/YYYY')
+      AND HIREDATE <= TO_DATE('30/09/1981', 'DD/MM/YYYY')
+ORDER BY HIREDATE DESC, ENAME ASC;
 
 -- Q27-Donner le numéro, le nom et le revenu total des employés embauchés un 13/05
 -- par ordre croissant de la date puis revenu décroissant.
+SELECT EMPNO, ENAME, REV
+FROM EMP NATURAL JOIN
+	(SELECT EMPNO, SAL+NVL(COMM, 0) AS REV FROM EMP)
+WHERE TO_CHAR(HIREDATE, 'DD/MM') = '13/05'
+ORDER BY HIREDATE ASC, REV DESC;
