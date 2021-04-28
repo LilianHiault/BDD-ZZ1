@@ -22,6 +22,7 @@ CREATE TABLE TEST(
 
 -- Q3-En utilisant la table adéquate du catalogue Oracle,
 -- retrouver toutes les contraintes qui ont été définies sur la table TEST.
+SELECT CONSTRAINT_NAME FROM User_cons_columns WHERE TABLE_NAME='TEST';
 
 -- Q4-Insérer les données des tables VIN et INSPECTEUR :
 
@@ -35,23 +36,42 @@ INSERT INTO INSPECTEUR VALUES(3,'Sympa');
 INSERT INTO INSPECTEUR VALUES(4,'Cool');
 
 -- Q5-Insérer les données de la table TEST (valider votre transaction à la fin).
+INSERT INTO TEST VALUES(1, 1, 7, TO_DATE('10/04/2009', 'DD/MM/YYYY'));
+INSERT INTO TEST VALUES(2, 1, 8, TO_DATE('15/05/2009', 'DD/MM/YYYY'));
+INSERT INTO TEST VALUES(2, 2, 4, TO_DATE('20/05/2009', 'DD/MM/YYYY'));
+INSERT INTO TEST VALUES(2, 3, 9, NULL);
 
 -- Q6-Vérifier le contenu des tables.
+SELECT * FROM TEST;
 
 -- Q7-Insérer le tuple (2, Rigolo) dans la table INSPECTEUR.
 -- Que se passe-t-il ? Pourquoi ?
+INSERT INTO INSPECTEUR VALUES (2, 'Rigolo');
+-- ORA-00001: violation de contrainte unique (LIHIAULT.PK_INSPECTEUR)
+-- La clé primaire 2 a déjà été utilisé
 
 -- Q8-Insérer le tuple (5, 2, 8, 01/01/2010) dans la table TEST.
 -- Que se passe-t-il ? Pourquoi ?
+INSERT INTO TEST VALUES(5, 2, 8, TO_DATE('01/01/2010', 'DD/MM/YYYY'));
+-- ORA-02291: violation de contrainte d'integrite (LIHIAULT.FKVNUM_TEST) - cle
+-- La clé étrangère VNUM 5 nest pas présente dans la table des inspecteurs
 
 -- Q9-Insérer un nouvel inspecteur dans la table INSPECTEUR,
 -- à savoir l’inspecteur de numéro 5 et dont on a égaré le nom.
 -- Que se passe-t-il ? Pourquoi ?
+INSERT INTO INSPECTEUR VALUES(5, NULL);
+-- On ne peut pas car contrainte NOT_NULL sur INOM
 
--- Q10-Supprimer le vin n°2. Que se passe-t-il ?  Pourquoi ?  
+-- Q10-Supprimer le vin n°2. Que se passe-t-il ?  Pourquoi ?
+-- => ON DELETE CASCADE
+DELETE FROM VIN WHERE VNUM = 2;
+-- ORA-02292: violation de contrainte (LIHIAULT.FKVNUM_TEST) d'integrite -
+-- La table TEST a une réference via une clé étrangère vers la clé primaire 2 de la table VIN
 
 -- Q11-Modifier les contraintes d’intégrité définies sur la table TEST pour
 -- obtenir la suppression des tests d’un vin lorsque celui-ci est supprimé de la table VIN.
+-- ALTER TALBE TEST DROP CONTRAINT FKVNUM_TEST;
+-- ALTER TABLE TEST ADD CONSTRAINT FKVNUM_TEST FOREIGN KEY (VNUM) REFERENCES VN(VNUM) ON DELETE CASCADE;
 
 -- Q12-Supprimer à nouveau le 2 et vérifier la suppression de ses tests.
 
@@ -63,6 +83,8 @@ INSERT INTO INSPECTEUR VALUES(4,'Cool');
 
 -- Q15-Faire les modifications de structure pour réduire la longueur de INOM à 6 caractères.
 -- Prévoir la récupération des valeurs de cette colonne en les tronquant à 6 caractères.
+-- UPDATE INSP SET INOM=SUBSRT(INOM, 1, 6);
+--ALTER TABLE INSP MODIFY (INOM VARCHAR(69):
 
 -- Q16-Créer la vue SYNTHESE09 regroupant les attributs CEPAGE, VNUM, VNOM, INOM, NOTE et TDATE pour tous les tests effectués en 2009.
 -- Vérifier que la vue a bien été créée.
