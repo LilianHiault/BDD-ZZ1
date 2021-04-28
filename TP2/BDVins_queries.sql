@@ -70,8 +70,8 @@ DELETE FROM VIN WHERE VNUM = 2;
 
 -- Q11-Modifier les contraintes d’intégrité définies sur la table TEST pour
 -- obtenir la suppression des tests d’un vin lorsque celui-ci est supprimé de la table VIN.
--- ALTER TALBE TEST DROP CONTRAINT FKVNUM_TEST;
--- ALTER TABLE TEST ADD CONSTRAINT FKVNUM_TEST FOREIGN KEY (VNUM) REFERENCES VN(VNUM) ON DELETE CASCADE;
+ALTER TABLE TEST DROP CONSTRAINT FKVNUM_TEST;
+ALTER TABLE TEST ADD CONSTRAINT FKVNUM_TEST FOREIGN KEY (VNUM) REFERENCES VIN(VNUM) ON DELETE CASCADE;
 
 -- Q12-Supprimer à nouveau le 2 et vérifier la suppression de ses tests.
 
@@ -98,7 +98,8 @@ DELETE FROM VIN WHERE VNUM = 2;
 
 -- Q19-Insérer les trois tuples (10, Relax), (11, Pointu) et (12, Odieux) dans la table INSPECTEUR.
 -- Vérifier que tout s’est bien passé.
--- Annuler la dernière transaction et vérifier à nouveau le contenu de la table INSPECTEUR. 
+-- Annuler la dernière transaction et vérifier à nouveau le contenu de la table INSPECTEUR.
+-- commit et rollback
 
 -- Q20-Modifier les instructions de Q15 de manière à ce que la table INSPECTEUR
 -- contienne les inspecteurs Pointu et Relax suite à l’annulation de la dernière transaction.
